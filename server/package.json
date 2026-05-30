@@ -1,0 +1,26 @@
+{
+  "name": "canvas-share",
+  "version": "1.0.0",
+  "description": "Frontend:",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongodb": "^7.2.0",
+    "ws": "^8.21.0",
+    "y-mongodb-provider": "0.2.1",
+    "yjs": "13.6.31",
+    "y-websocket": "2.0.4"
+  },
+  "overrrides": {
+    "yjs": "14.0.0-16"
+  }
+}

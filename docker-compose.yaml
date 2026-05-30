@@ -1,0 +1,35 @@
+services:
+  mongodb:
+      image: mongo:latest
+      container_name: mongodb
+      ports:
+        - "27017:27017"
+      volumes:
+        - mongo-data:/data
+      environment:
+        MONGO_INITDB_ROOT_USERNAME: admin
+        MONGO_INITDB_ROOT_PASSWORD: Kese4Glory
+      networks:
+          - mongodb_network
+
+  mongo-express:
+      image: mongo-express:latest
+      container_name: mongo-express
+      restart: always
+      ports:
+        - "8081:8081"
+      environment:
+          ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+          ME_CONFIG_MONGODB_ADMINPASSWORD: Kese4Glory
+          ME_CONFIG_MONGODB_SERVER: mongodb
+      volumes: []
+
+      networks:
+        - mongodb_network
+
+networks:
+  mongodb_network:
+    driver: bridge
+
+volumes:
+  mongo-data:
