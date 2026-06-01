@@ -23,15 +23,30 @@ setPersistence({
         console.log(`loading initial state from mongodb from room:${docName}`)
   
 
-const persistedYDoc = await mongodbPersistence.getYDoc(docName);
+try{
+  const persistedYDoc = await mongodbPersistence.getYDoc(docName);
 
-const newUpdates = Y.encodeStateAsUpdate(persistedYDoc);
+if(persistedYDoc && typeof persistedYDoc.destroy === 'function'){
+  const newUpdates = Y.encodeStateAsUpdate(persistedYDoc);
     Y.applyUpdate(ydoc, newUpdates);
-
+    console.log(`[YJS] state successfully restored for room: ${docName}`)
+}
+else{
+  console.log(`[YJS] No previous state found for room: ${docName}. Starting with a blank canvas`)
+}
+}
+catch(dbError){
+  console.error(`[YJS DB Error] failed to fetch state for room: ${docName};`, dbError.message);
+  console.log('[YJS] falling back to clean in-memory temporary canvas session')
+}
 ydoc.on('update', async (update)=>{
-    await mongodbPersistence.storeUpdate(docName, update)
+   try{
+     await mongodbPersistence.storeUpdate(docName, update)
+   }
+   catch(saveError){
+console.error(`[YJS DB Save Error] failed to save update:`, saveError.message);
+   }
 })
-persistedYDoc.destroy()
   },
   writeState: async (docName, ydoc)=>{
     console.log(`All clients disconnected. State finalized for room: ${docName}`);
