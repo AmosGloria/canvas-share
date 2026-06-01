@@ -59,10 +59,10 @@ const handleMouseUp = () => {
       id: `line-${Date.now()}`,
       type: 'pencil',
       points: currentLine.current,
-      color: '#ff0000',
+      color: '#00000',
       strokeWidth: 3
     };
-    addElements(newElement);
+    addElements([newElement]);
 currentLine.current = [];
 }
 
