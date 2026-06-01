@@ -35,7 +35,8 @@ export function useWhiteboard(roomId){
 
 const addElements = (newElements) => {
 if(sharedElementsRef.current){
-    sharedElementsRef.current.push(newElements)
+    const elementsToAdd = Array.isArray(newElements)? newElements : [newElements];
+    sharedElementsRef.current.push(elementsToAdd)
 }
 }
 
