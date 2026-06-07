@@ -22,7 +22,6 @@ setPersistence({
     bindState: async (docName, ydoc)=>{
         console.log(`loading initial state from mongodb from room:${docName}`)
   
-
 try{
   const persistedYDoc = await mongodbPersistence.getYDoc(docName);
 
