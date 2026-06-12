@@ -1,66 +1,106 @@
 import React from "react";
 
-interface ToolBoxProps{
-    activeTool:string,
-    setActiveTool : (toolId:string)=>void,
-    onClearCanvas: ()=>void
+interface ToolBoxProps {
+  activeTool: string;
+  setActiveTool: (toolId: string) => void;
+  onClearCanvas: () => void;
+  onDuplicateSelected?: () => void;
+  onDeleteSelected?: () => void;
+  hasSelectedElement?: boolean;
+  selectedCount?: number;
 }
 
-export default function ToolBox({ activeTool, setActiveTool, onClearCanvas }:ToolBoxProps) {
-  const drawingTools = [
-    { id: "pencil", label: "✏️ Sketch" },
-    { id: "eraser", label: "🧽 Eraser" },
-    { id: "text", label: "🔤 Text" },
+export default function ToolBox({
+  activeTool,
+  setActiveTool,
+  onClearCanvas,
+  onDuplicateSelected,
+  onDeleteSelected,
+  hasSelectedElement = false,
+  selectedCount = 0,
+}: ToolBoxProps) {
+  const tools = [
+    { id: "select", icon: "🖱️", label: "Select" },
+    { id: "pencil", icon: "✏️", label: "Sketch" },
+    { id: "eraser", icon: "🧽", label: "Eraser" },
+    { id: "text", icon: "🔤", label: "Text" },
+    { id: "rectangle", icon: "⬜", label: "Rectangle" },
+    { id: "square", icon: "⏹️", label: "Square" },
+    { id: "circle", icon: "⭕", label: "Circle" },
+    { id: "diamond", icon: "🔷", label: "Diamond" },
+    { id: "arrow", icon: "➡️", label: "Arrow" },
   ];
 
-  const shapeTools = [
-    { id: "rectangle", label: "⬜ Rectangle" },
-    { id: "square", label: "⏹️ Square" },
-    { id: "circle", label: "⭕ Circle" },
-    { id: "diamond", label: "🔷 Diamond" },
-    { id: "arrow", label: "➡️ Arrow" },
-  ];
+  const selectedLabel =
+    selectedCount > 1 ? `${selectedCount} selected` : "1 selected";
 
   return (
-    <main className="flex flex-col lg:flex-row">
-      <div className="flex items-center">
-        {drawingTools.map((tool) => (
-          <button
-            key={tool.id}
-            onClick={()=>setActiveTool(tool.id)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold tracking-wide border transition-all duration-200 whitespace-nowrap ${
-              activeTool === tool.id
-                ? "bg-indigo-500 text-white border-indigo-400 shadow-lg shadow-indigo-500/20"
-                : "text-slate-300 border-transparent hover:bg-slate-800/80 hover:text-white"
-            }`}
-          >
-            {tool.label}
-          </button>
-        ))}
-      </div>
+    <main className="inline-flex flex-col lg:flex-row items-center gap-1 rounded-2xl bg-slate-950/95 p-2 shadow-xl">
+      {tools.map((tool) => (
+        <button
+          key={tool.id}
+          type="button"
+          onClick={() => setActiveTool(tool.id)}
+          title={tool.label}
+          aria-label={tool.label}
+          className={`w-9 h-9 flex shrink-0 items-center justify-center rounded-xl text-sm font-semibold border transition-all duration-200 ${
+            activeTool === tool.id
+              ? "bg-indigo-500 text-white border-indigo-400 shadow-lg shadow-indigo-500/20"
+              : "text-slate-300 border-transparent hover:bg-slate-800/80 hover:text-white"
+          }`}
+        >
+          <span aria-hidden="true">{tool.icon}</span>
+        </button>
+      ))}
 
-      <section>
-        <div className="flex">
-          {shapeTools.map((tool) => (
-            <button
-              key={tool.id}
-              onClick={()=>setActiveTool(tool.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold tracking-wide border transition-all duration-200 whitespace-nowrap ${
-                activeTool ===tool.id?
-                 "bg-indigo-500 text-white border-indigo-400 shadow-lg shadow-indigo-500/20"
-                : "text-slate-300 border-transparent hover:bg-slate-800/80 hover:text-white"
-              }`}
-            >{tool.label}</button>
-          ))}
-        </div>
-      </section>
+      {hasSelectedElement && (
+        <span
+          title={selectedLabel}
+          aria-label={selectedLabel}
+          className="w-9 h-9 flex shrink-0 items-center justify-center rounded-xl text-xs font-bold text-indigo-200 bg-indigo-500/10 border border-indigo-400/20"
+        >
+          <span aria-hidden="true">✅</span>
+        </span>
+      )}
 
-      <div className="w-[1px] h-6 bg-slate-700/80 shrink-0" />
       <button
-        onClick={onClearCanvas}
-        className="px-3 py-1.5 rounded-xl text-xs font-bold text-rose-400 border border-transparent hover:border-rose-500/30 hover:bg-rose-500/10 transition-all duration-200 whitespace-nowrap"
+        type="button"
+        onClick={onDuplicateSelected}
+        disabled={!hasSelectedElement}
+        title="Duplicate selected object(s). Shortcut: Ctrl/Cmd + D"
+        aria-label="Duplicate selected object(s)"
+        className={`w-9 h-9 flex shrink-0 items-center justify-center rounded-xl text-sm font-bold border transition-all duration-200 ${
+          hasSelectedElement
+            ? "text-emerald-300 border-transparent hover:border-emerald-500/30 hover:bg-emerald-500/10"
+            : "text-slate-600 border-transparent cursor-not-allowed"
+        }`}
       >
-        🗑️ Clear All
+        <span aria-hidden="true">📋</span>
+      </button>
+
+      <button
+        type="button"
+        onClick={onDeleteSelected}
+        disabled={!hasSelectedElement}
+        title="Delete selected object(s). Shortcut: Delete or Backspace"
+        aria-label="Delete selected object(s)"
+        className={`w-9 h-9 flex shrink-0 items-center justify-center rounded-xl text-sm font-bold border transition-all duration-200 ${
+          hasSelectedElement
+            ? "text-amber-300 border-transparent hover:border-amber-500/30 hover:bg-amber-500/10"
+            : "text-slate-600 border-transparent cursor-not-allowed"
+        }`}
+      >
+        <span aria-hidden="true">🗑️</span>
+      </button>
+
+      <button
+        type="button"
+        onClick={onClearCanvas}
+        title="Clear all objects"
+        aria-label="Clear all objects"
+        className="w-9 h-9 flex shrink-0 items-center justify-center rounded-xl text-sm font-bold text-rose-400 border border-transparent hover:border-rose-500/30 hover:bg-rose-500/10 transition-all duration-200"
+      >
+        <span aria-hidden="true">🧹</span>
       </button>
     </main>
   );
