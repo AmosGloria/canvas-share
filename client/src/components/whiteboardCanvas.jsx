@@ -21,7 +21,7 @@ const getElementBounds = (el) => {
     };
   }
 
-  if (["rectangle", "square", "diamond", "arrow"].includes(el.type) && el.start && el.end) {
+  if (["rectangle", "square", "diamond", "arrow", "line"].includes(el.type) && el.start && el.end) {
     const x = Math.min(el.start[0], el.end[0]);
     const y = Math.min(el.start[1], el.end[1]);
     const width = Math.abs(el.end[0] - el.start[0]);
@@ -419,6 +419,11 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
         ctx.moveTo(el.end[0], el.end[1]);
         ctx.lineTo(el.end[0] - hl * Math.cos(angle + Math.PI / 6), el.end[1] - hl * Math.sin(angle + Math.PI / 6));
         ctx.stroke();
+      } else if(el.type === "line" && el.start && el.end) {
+        ctx.beginPath();
+        ctx.moveTo(el.start[0], el.start[1]);
+        ctx.lineTo(el.end[0], el.end[1]);
+        ctx.stroke()
       }
     });
 
@@ -635,7 +640,12 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
         ctx.lineTo(sp.x, midY);
         ctx.closePath();
         ctx.stroke();
-      } else if (activeTool === "arrow") {
+      }else if(activeTool === "line"){
+        ctx.moveTo(sp.x, sp.y);
+        ctx.lineTo(worldPos.x, worldPos.y);
+        ctx.stroke()
+      }
+       else if (activeTool === "arrow") {
         const angle = Math.atan2(worldPos.y - sp.y, worldPos.x - sp.x);
         ctx.moveTo(sp.x, sp.y);
         ctx.lineTo(worldPos.x, worldPos.y);

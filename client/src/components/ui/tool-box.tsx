@@ -1,4 +1,14 @@
 import React from "react";
+import {
+  LuPencil, 
+  LuCircle, 
+  LuSquare, 
+  LuRectangleHorizontal, 
+  LuEraser, 
+  LuDiamond, 
+  LuArrowRight, 
+  LuTrash2, LuCopy} from "react-icons/lu";
+import { MdTextFields, MdDeleteSweep, MdHorizontalRule } from "react-icons/md";
 
 interface ToolBoxProps {
   activeTool: string;
@@ -21,14 +31,15 @@ export default function ToolBox({
 }: ToolBoxProps) {
   const tools = [
     { id: "select", icon: "🖱️", label: "Select" },
-    { id: "pencil", icon: "✏️", label: "Sketch" },
-    { id: "eraser", icon: "🧽", label: "Eraser" },
-    { id: "text", icon: "🔤", label: "Text" },
-    { id: "rectangle", icon: "⬜", label: "Rectangle" },
-    { id: "square", icon: "⏹️", label: "Square" },
-    { id: "circle", icon: "⭕", label: "Circle" },
-    { id: "diamond", icon: "🔷", label: "Diamond" },
-    { id: "arrow", icon: "➡️", label: "Arrow" },
+    { id: "pencil", icon: <LuPencil/>, label: "Sketch" },
+    { id: "eraser", icon: <LuEraser/>, label: "Eraser" },
+    { id: "text", icon: <MdTextFields/>, label: "Text" },
+    { id: "rectangle", icon:<LuRectangleHorizontal/>, label: "Rectangle" },
+    { id: "square", icon: <LuSquare/>, label: "Square" },
+    { id: "circle", icon: <LuCircle/>, label: "Circle" },
+    { id: "diamond", icon: <LuDiamond/>, label: "Diamond" },
+    { id: "arrow", icon: <LuArrowRight/>, label: "Arrow" },
+    { id: "line", icon: <MdHorizontalRule/>, label: "Line"},
   ];
 
   const selectedLabel =
@@ -75,7 +86,7 @@ export default function ToolBox({
             : "text-slate-600 border-transparent cursor-not-allowed"
         }`}
       >
-        <span aria-hidden="true">📋</span>
+        <LuCopy/>
       </button>
 
       <button
@@ -90,7 +101,7 @@ export default function ToolBox({
             : "text-slate-600 border-transparent cursor-not-allowed"
         }`}
       >
-        <span aria-hidden="true">🗑️</span>
+        <LuTrash2/>
       </button>
 
       <button
@@ -100,7 +111,7 @@ export default function ToolBox({
         aria-label="Clear all objects"
         className="w-9 h-9 flex shrink-0 items-center justify-center rounded-xl text-sm font-bold text-rose-400 border border-transparent hover:border-rose-500/30 hover:bg-rose-500/10 transition-all duration-200"
       >
-        <span aria-hidden="true">🧹</span>
+        <MdDeleteSweep/>
       </button>
     </main>
   );
