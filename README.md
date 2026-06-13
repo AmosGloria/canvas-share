@@ -9,3 +9,7 @@ Authentication:  bcrypt.js
 Database:
 Mongodb
 
+Deployment:
+Database deployment: MongoDb Atlas
+Backend: Render
+Frontend: Vercel
