@@ -18,6 +18,10 @@ interface ToolBoxProps {
   onDeleteSelected?: () => void;
   hasSelectedElement?: boolean;
   selectedCount?: number;
+  strokeColor: string;
+  setStrokeColor: (color: string) => void;
+  strokeWidth: number;
+  setStrokeWidth: (width: number) => void;
 }
 
 export default function ToolBox({
@@ -28,6 +32,10 @@ export default function ToolBox({
   onDeleteSelected,
   hasSelectedElement = false,
   selectedCount = 0,
+    strokeColor,
+  setStrokeColor,
+  strokeWidth,
+  setStrokeWidth,
 }: ToolBoxProps) {
   const tools = [
     { id: "select", icon: "🖱️", label: "Select" },
@@ -62,6 +70,7 @@ export default function ToolBox({
         >
           <span aria-hidden="true">{tool.icon}</span>
         </button>
+        
       ))}
 
       {hasSelectedElement && (
@@ -113,6 +122,25 @@ export default function ToolBox({
       >
         <MdDeleteSweep/>
       </button>
+      <div className="flex items-center space-x-2 ml-2">
+  {/* Stroke color picker */}
+  <input
+    type="color"
+    value={strokeColor}
+    onChange={(e) => setStrokeColor(e.target.value)}
+    className="w-8 h-8 border rounded"
+  />
+
+  {/* Stroke weight selector */}
+  <input
+    type="range"
+    min="1"
+    max="20"
+    value={strokeWidth}
+    onChange={(e) => setStrokeWidth(parseInt(e.target.value))}
+    className="w-20"
+  />
+</div>
     </main>
   );
 }

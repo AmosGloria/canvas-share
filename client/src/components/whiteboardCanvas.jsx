@@ -234,6 +234,8 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
   const isPanning = useRef(false);
   const startPanPoint = useRef({ x: 0, y: 0 });
   const interactionRef = useRef(null);
+  const [strokeColor, setStrokeColor] = useState("#000000"); 
+  const [strokeWidth, setStrokeWidth] = useState(1); 
 
   const { elements, addElements, clearElements, updateElements } = useWhiteboard(roomId);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -596,8 +598,8 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
       ctx.save();
       ctx.translate(p.x, p.y);
       ctx.scale(z, z);
-      ctx.strokeStyle = activeTool === "eraser" ? "#FFFFFF" : "#000000";
-      ctx.lineWidth = activeTool === "eraser" ? 20 : 3;
+      ctx.strokeStyle = activeTool === "eraser" ? "#FFFFFF" : strokeColor;
+      ctx.lineWidth = activeTool === "eraser" ? 20 : strokeWidth;
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
       ctx.beginPath();
@@ -689,8 +691,8 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
         id: `line-${Date.now()}`,
         type: activeTool,
         points: currentLine.current,
-        color: "#000000",
-        strokeWidth: 3,
+        color: activeTool === "eraser" ? "#FFFFFF" : strokeColor,
+        strokeWidth: activeTool === "eraser" ? 20 : strokeWidth,
       };
     } else if (activeTool !== "pencil" && activeTool !== "eraser" && activeTool !== "text") {
       newElement = {
@@ -698,8 +700,8 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
         type: activeTool,
         start: [startPoint.current.x, startPoint.current.y],
         end: [worldPos.x, worldPos.y],
-        color: "#000000",
-        strokeWidth: 3,
+        color: strokeColor,
+        strokeWidth: strokeWidth,
       };
     }
 
@@ -817,7 +819,7 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
       ref={containerRef}
       className="w-screen h-screen fixed inset-0 bg-white overflow-hidden select-none"
     >
-      <div className="absolute z-10 top-3 left-3 w-fit">
+      <div className="fixed z-10 top-3 left-3 w-fit">
         <ToolBox
           activeTool={activeTool}
           setActiveTool={setActiveTool}
@@ -826,6 +828,10 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
           onDeleteSelected={handleDeleteSelected}
           hasSelectedElement={selectedElementIds.length > 0}
           selectedCount={selectedElementIds.length}
+          strokeColor={strokeColor}
+          setStrokeColor={setStrokeColor}
+          strokeWidth={strokeWidth}
+          setStrokeWidth={setStrokeWidth}
         />
       </div>
 
