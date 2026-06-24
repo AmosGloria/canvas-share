@@ -236,6 +236,7 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
   const interactionRef = useRef(null);
   const [strokeColor, setStrokeColor] = useState("#000000"); 
   const [strokeWidth, setStrokeWidth] = useState(1); 
+  const [fillColor, setFillColor] = useState("#ffffff")
 
   const { elements, addElements, clearElements, updateElements } = useWhiteboard(roomId);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -369,6 +370,7 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
       ctx.beginPath();
       ctx.strokeStyle = el.color || "#000000";
       ctx.lineWidth = el.strokeWidth || 3;
+      ctx.fillStyle = el.fillColor || "transparent";
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
 
@@ -388,14 +390,22 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
           w = w < 0 ? -s : s;
           h = h < 0 ? -s : s;
         }
-        ctx.strokeRect(el.start[0], el.start[1], w, h);
-      } else if (el.type === "circle" && el.start && el.end) {
+        if (el.fillColor && el.fillColor !== "transparent") {
+      ctx.fillRect(el.start[0], el.start[1], w, h);
+    }
+    ctx.strokeRect(el.start[0], el.start[1], w, h);
+  }else if (el.type === "circle" && el.start && el.end) {
         const r = Math.sqrt(Math.pow(el.end[0] - el.start[0], 2) + Math.pow(el.end[1] - el.start[1], 2));
         ctx.arc(el.start[0], el.start[1], r, 0, 2 * Math.PI);
-        ctx.stroke();
-      } else if (el.type === "text") {
+       if (el.fillColor && el.fillColor !== "transparent") {
+    ctx.fillStyle = el.fillColor;
+    ctx.fill();
+  }
+  ctx.stroke();
+} else if (el.type === "text") {
         ctx.font = `${el.fontSize || 16}px Arial`;
-        ctx.fillStyle = el.color || "#000000";
+        ctx.fillStyle = el.fillColor || fillColor;
+
         ctx.textBaseline = "top";
         (el.text || "").split("\n").forEach((line, i) => {
           ctx.fillText(line, el.x, el.y + i * (el.fontSize || 20));
@@ -408,7 +418,11 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
         ctx.lineTo(midX, el.end[1]);
         ctx.lineTo(el.start[0], midY);
         ctx.closePath();
-        ctx.stroke();
+        if (el.fillColor && el.fillColor !== "transparent") {
+    ctx.fillStyle = el.fillColor;
+    ctx.fill();
+  }
+  ctx.stroke();
       } else if (el.type === "arrow" && el.start && el.end) {
         const angle = Math.atan2(el.end[1] - el.start[1], el.end[0] - el.start[0]);
         const hl = 15;
@@ -614,7 +628,8 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
       ctx.scale(z, z);
 
       ctx.beginPath();
-      ctx.strokeStyle = SELECTION_COLOR;
+      ctx.strokeStyle = strokeColor;
+      ctx.fillStyle = fillColor;
       ctx.lineWidth = 3;
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
@@ -632,6 +647,7 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
       } else if (activeTool === "circle") {
         const r = Math.sqrt(Math.pow(worldPos.x - sp.x, 2) + Math.pow(worldPos.y - sp.y, 2));
         ctx.arc(sp.x, sp.y, r, 0, 2 * Math.PI);
+        ctx.fill();
         ctx.stroke();
       } else if (activeTool === "diamond") {
         const midX = (sp.x + worldPos.x) / 2;
@@ -641,6 +657,7 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
         ctx.lineTo(midX, worldPos.y);
         ctx.lineTo(sp.x, midY);
         ctx.closePath();
+        ctx.fill();
         ctx.stroke();
       }else if(activeTool === "line"){
         ctx.moveTo(sp.x, sp.y);
@@ -702,6 +719,7 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
         end: [worldPos.x, worldPos.y],
         color: strokeColor,
         strokeWidth: strokeWidth,
+        fillColor: fillColor,
       };
     }
 
@@ -832,6 +850,8 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
           setStrokeColor={setStrokeColor}
           strokeWidth={strokeWidth}
           setStrokeWidth={setStrokeWidth}
+          fillColor ={fillColor}
+          setFillColor={setFillColor}
         />
       </div>
 

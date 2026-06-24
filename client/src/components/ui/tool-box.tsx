@@ -22,6 +22,8 @@ interface ToolBoxProps {
   setStrokeColor: (color: string) => void;
   strokeWidth: number;
   setStrokeWidth: (width: number) => void;
+  fillColor: string;
+  setFillColor: (color: string) => void;
 }
 
 export default function ToolBox({
@@ -32,10 +34,12 @@ export default function ToolBox({
   onDeleteSelected,
   hasSelectedElement = false,
   selectedCount = 0,
-    strokeColor,
+  strokeColor,
   setStrokeColor,
   strokeWidth,
   setStrokeWidth,
+  fillColor,
+  setFillColor,
 }: ToolBoxProps) {
   const tools = [
     { id: "select", icon: "🖱️", label: "Select" },
@@ -129,9 +133,8 @@ export default function ToolBox({
     value={strokeColor}
     onChange={(e) => setStrokeColor(e.target.value)}
     className="w-8 h-8 border rounded"
+    title="stroke color"
   />
-
-  {/* Stroke weight selector */}
   <input
     type="range"
     min="1"
@@ -139,7 +142,16 @@ export default function ToolBox({
     value={strokeWidth}
     onChange={(e) => setStrokeWidth(parseInt(e.target.value))}
     className="w-20"
+    title="stroke width"
   />
+    <input
+    type="color"
+    value={fillColor}
+    onChange={(e) => setFillColor(e.target.value)}
+    className="w-8 h-8 border rounded"
+    title="Fill Color"
+  />
+  
 </div>
     </main>
   );
