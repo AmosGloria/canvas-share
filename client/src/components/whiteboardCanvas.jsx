@@ -21,17 +21,29 @@ const getElementBounds = (el) => {
     };
   }
 
-  if (["rectangle", "square", "diamond", "arrow", "line"].includes(el.type) && el.start && el.end) {
+  if (
+    ["rectangle", "square", "diamond", "arrow", "line"].includes(el.type) &&
+    el.start &&
+    el.end
+  ) {
     const x = Math.min(el.start[0], el.end[0]);
     const y = Math.min(el.start[1], el.end[1]);
     const width = Math.abs(el.end[0] - el.start[0]);
     const height = Math.abs(el.end[1] - el.start[1]);
     const pad = el.type === "arrow" ? 18 : 6;
-    return { x: x - pad, y: y - pad, width: width + pad * 2, height: height + pad * 2 };
+    return {
+      x: x - pad,
+      y: y - pad,
+      width: width + pad * 2,
+      height: height + pad * 2,
+    };
   }
 
   if (el.type === "circle" && el.start && el.end) {
-    const r = Math.sqrt(Math.pow(el.end[0] - el.start[0], 2) + Math.pow(el.end[1] - el.start[1], 2));
+    const r = Math.sqrt(
+      Math.pow(el.end[0] - el.start[0], 2) +
+        Math.pow(el.end[1] - el.start[1], 2),
+    );
     return {
       x: el.start[0] - r - 6,
       y: el.start[1] - r - 6,
@@ -119,7 +131,7 @@ const getResizeHandleAtPoint = (point, bounds, zoom) => {
       y: handle.y - size / 2,
       width: size,
       height: size,
-    })
+    }),
   );
 };
 
@@ -186,7 +198,10 @@ const resizeElement = (el, oldBox, newBox) => {
   if (!oldBox) return el;
 
   if (el.points) {
-    return { ...el, points: el.points.map((pt) => scalePoint(pt, oldBox, newBox)) };
+    return {
+      ...el,
+      points: el.points.map((pt) => scalePoint(pt, oldBox, newBox)),
+    };
   }
 
   if (el.start && el.end) {
@@ -218,7 +233,7 @@ const cloneElement = (el) => {
       id: `${el.type || "element"}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
     },
     DUPLICATE_OFFSET,
-    DUPLICATE_OFFSET
+    DUPLICATE_OFFSET,
   );
 };
 
@@ -234,11 +249,12 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
   const isPanning = useRef(false);
   const startPanPoint = useRef({ x: 0, y: 0 });
   const interactionRef = useRef(null);
-  const [strokeColor, setStrokeColor] = useState("#000000"); 
-  const [strokeWidth, setStrokeWidth] = useState(1); 
-  const [fillColor, setFillColor] = useState("#ffffff")
+  const [strokeColor, setStrokeColor] = useState("#000000");
+  const [strokeWidth, setStrokeWidth] = useState(1);
+  const [fillColor, setFillColor] = useState("#ffffff");
 
-  const { elements, addElements, clearElements, updateElements } = useWhiteboard(roomId);
+  const { elements, addElements, clearElements, updateElements } =
+    useWhiteboard(roomId);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [activeTool, setActiveTool] = useState("pencil");
   const [selectedElementIds, setSelectedElementIds] = useState([]);
@@ -332,14 +348,20 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
 
     selectedEls.forEach((selectedEl) => {
       const bounds = getElementBounds(selectedEl);
-      if (bounds) ctx.strokeRect(bounds.x, bounds.y, bounds.width, bounds.height);
+      if (bounds)
+        ctx.strokeRect(bounds.x, bounds.y, bounds.width, bounds.height);
     });
 
     if (selectedEls.length > 1) {
       const combinedBounds = getCombinedBounds(selectedEls);
       if (combinedBounds) {
         ctx.setLineDash([]);
-        ctx.strokeRect(combinedBounds.x, combinedBounds.y, combinedBounds.width, combinedBounds.height);
+        ctx.strokeRect(
+          combinedBounds.x,
+          combinedBounds.y,
+          combinedBounds.width,
+          combinedBounds.height,
+        );
       }
     }
 
@@ -350,7 +372,12 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
 
       getResizeHandles(bounds).forEach((handle) => {
         ctx.beginPath();
-        ctx.rect(handle.x - handleSize / 2, handle.y - handleSize / 2, handleSize, handleSize);
+        ctx.rect(
+          handle.x - handleSize / 2,
+          handle.y - handleSize / 2,
+          handleSize,
+          handleSize,
+        );
         ctx.fill();
         ctx.stroke();
       });
@@ -359,7 +386,15 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
     ctx.restore();
   };
 
-  const redrawAll = (ctx, canvas, els, p, z, selectedIds = selectedElementIds, activeSelectionBox = selectionBox) => {
+  const redrawAll = (
+    ctx,
+    canvas,
+    els,
+    p,
+    z,
+    selectedIds = selectedElementIds,
+    activeSelectionBox = selectionBox,
+  ) => {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
@@ -374,15 +409,23 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
 
-      if ((el.type === "pencil" || el.type === "eraser") && el.points?.length > 0) {
-        ctx.strokeStyle = el.type === "eraser" ? "#FFFFFF" : el.color || "#000000";
+      if (
+        (el.type === "pencil" || el.type === "eraser") &&
+        el.points?.length > 0
+      ) {
+        ctx.strokeStyle =
+          el.type === "eraser" ? "#FFFFFF" : el.color || "#000000";
         ctx.lineWidth = el.type === "eraser" ? 20 : el.strokeWidth || 3;
         el.points.forEach((pt, i) => {
           if (i === 0) ctx.moveTo(pt[0], pt[1]);
           else ctx.lineTo(pt[0], pt[1]);
         });
         ctx.stroke();
-      } else if ((el.type === "rectangle" || el.type === "square") && el.start && el.end) {
+      } else if (
+        (el.type === "rectangle" || el.type === "square") &&
+        el.start &&
+        el.end
+      ) {
         let w = el.end[0] - el.start[0];
         let h = el.end[1] - el.start[1];
         if (el.type === "square") {
@@ -391,18 +434,21 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
           h = h < 0 ? -s : s;
         }
         if (el.fillColor && el.fillColor !== "transparent") {
-      ctx.fillRect(el.start[0], el.start[1], w, h);
-    }
-    ctx.strokeRect(el.start[0], el.start[1], w, h);
-  }else if (el.type === "circle" && el.start && el.end) {
-        const r = Math.sqrt(Math.pow(el.end[0] - el.start[0], 2) + Math.pow(el.end[1] - el.start[1], 2));
+          ctx.fillRect(el.start[0], el.start[1], w, h);
+        }
+        ctx.strokeRect(el.start[0], el.start[1], w, h);
+      } else if (el.type === "circle" && el.start && el.end) {
+        const r = Math.sqrt(
+          Math.pow(el.end[0] - el.start[0], 2) +
+            Math.pow(el.end[1] - el.start[1], 2),
+        );
         ctx.arc(el.start[0], el.start[1], r, 0, 2 * Math.PI);
-       if (el.fillColor && el.fillColor !== "transparent") {
-    ctx.fillStyle = el.fillColor;
-    ctx.fill();
-  }
-  ctx.stroke();
-} else if (el.type === "text") {
+        if (el.fillColor && el.fillColor !== "transparent") {
+          ctx.fillStyle = el.fillColor;
+          ctx.fill();
+        }
+        ctx.stroke();
+      } else if (el.type === "text") {
         ctx.font = `${el.fontSize || 16}px Arial`;
         ctx.fillStyle = el.fillColor || fillColor;
 
@@ -419,27 +465,36 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
         ctx.lineTo(el.start[0], midY);
         ctx.closePath();
         if (el.fillColor && el.fillColor !== "transparent") {
-    ctx.fillStyle = el.fillColor;
-    ctx.fill();
-  }
-  ctx.stroke();
+          ctx.fillStyle = el.fillColor;
+          ctx.fill();
+        }
+        ctx.stroke();
       } else if (el.type === "arrow" && el.start && el.end) {
-        const angle = Math.atan2(el.end[1] - el.start[1], el.end[0] - el.start[0]);
+        const angle = Math.atan2(
+          el.end[1] - el.start[1],
+          el.end[0] - el.start[0],
+        );
         const hl = 15;
         ctx.moveTo(el.start[0], el.start[1]);
         ctx.lineTo(el.end[0], el.end[1]);
         ctx.stroke();
         ctx.beginPath();
         ctx.moveTo(el.end[0], el.end[1]);
-        ctx.lineTo(el.end[0] - hl * Math.cos(angle - Math.PI / 6), el.end[1] - hl * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(
+          el.end[0] - hl * Math.cos(angle - Math.PI / 6),
+          el.end[1] - hl * Math.sin(angle - Math.PI / 6),
+        );
         ctx.moveTo(el.end[0], el.end[1]);
-        ctx.lineTo(el.end[0] - hl * Math.cos(angle + Math.PI / 6), el.end[1] - hl * Math.sin(angle + Math.PI / 6));
+        ctx.lineTo(
+          el.end[0] - hl * Math.cos(angle + Math.PI / 6),
+          el.end[1] - hl * Math.sin(angle + Math.PI / 6),
+        );
         ctx.stroke();
-      } else if(el.type === "line" && el.start && el.end) {
+      } else if (el.type === "line" && el.start && el.end) {
         ctx.beginPath();
         ctx.moveTo(el.start[0], el.start[1]);
         ctx.lineTo(el.end[0], el.end[1]);
-        ctx.stroke()
+        ctx.stroke();
       }
     });
 
@@ -462,7 +517,9 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
     if (!hitElement) return [];
 
     if (!shouldToggle) {
-      return currentSelection.includes(hitElement.id) ? currentSelection : [hitElement.id];
+      return currentSelection.includes(hitElement.id)
+        ? currentSelection
+        : [hitElement.id];
     }
 
     if (currentSelection.includes(hitElement.id)) {
@@ -475,10 +532,17 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
   const handleSelectPointerDown = (worldPos, e) => {
     const currentElements = elementsRef.current;
     const currentSelection = selectedIdsRef.current;
-    const selectedElements = currentElements.filter((el) => currentSelection.includes(el.id));
-    const selectedElement = selectedElements.length === 1 ? selectedElements[0] : null;
+    const selectedElements = currentElements.filter((el) =>
+      currentSelection.includes(el.id),
+    );
+    const selectedElement =
+      selectedElements.length === 1 ? selectedElements[0] : null;
     const selectedBounds = getElementBounds(selectedElement);
-    const resizeHandle = getResizeHandleAtPoint(worldPos, selectedBounds, zoomRef.current);
+    const resizeHandle = getResizeHandleAtPoint(
+      worldPos,
+      selectedBounds,
+      zoomRef.current,
+    );
 
     if (selectedElement && resizeHandle) {
       interactionRef.current = {
@@ -492,7 +556,11 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
       return;
     }
 
-    const hitElement = findElementAtPoint(worldPos, currentElements, zoomRef.current);
+    const hitElement = findElementAtPoint(
+      worldPos,
+      currentElements,
+      zoomRef.current,
+    );
     const shouldToggle = e.shiftKey || e.ctrlKey || e.metaKey;
 
     if (hitElement) {
@@ -555,7 +623,10 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
     if (textInput) return;
 
     if (isPanning.current) {
-      setPan({ x: e.clientX - startPanPoint.current.x, y: e.clientY - startPanPoint.current.y });
+      setPan({
+        x: e.clientX - startPanPoint.current.x,
+        y: e.clientY - startPanPoint.current.y,
+      });
       return;
     }
 
@@ -569,16 +640,22 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
         const dx = worldPos.x - interaction.startWorld.x;
         const dy = worldPos.y - interaction.startWorld.y;
         nextElements = interaction.originalElements.map((el) =>
-          interaction.elementIds.includes(el.id) ? moveElement(el, dx, dy) : el
+          interaction.elementIds.includes(el.id) ? moveElement(el, dx, dy) : el,
         );
         setCanvasElements(nextElements);
         return;
       }
 
       if (interaction.type === "resize") {
-        const newBox = buildResizedBox(interaction.originalBox, interaction.handle, worldPos);
+        const newBox = buildResizedBox(
+          interaction.originalBox,
+          interaction.handle,
+          worldPos,
+        );
         nextElements = interaction.originalElements.map((el) =>
-          el.id === interaction.elementId ? resizeElement(el, interaction.originalBox, newBox) : el
+          el.id === interaction.elementId
+            ? resizeElement(el, interaction.originalBox, newBox)
+            : el,
         );
         setCanvasElements(nextElements);
         return;
@@ -589,7 +666,9 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
         const selectedByBox = interaction.originalElements
           .filter((el) => doBoundsIntersect(getElementBounds(el), nextBox))
           .map((el) => el.id);
-        const mergedSelection = Array.from(new Set([...interaction.originalSelection, ...selectedByBox]));
+        const mergedSelection = Array.from(
+          new Set([...interaction.originalSelection, ...selectedByBox]),
+        );
 
         setSelectionBox(nextBox);
         setSelectedElementIds(mergedSelection);
@@ -645,7 +724,9 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
         }
         ctx.strokeRect(sp.x, sp.y, w, h);
       } else if (activeTool === "circle") {
-        const r = Math.sqrt(Math.pow(worldPos.x - sp.x, 2) + Math.pow(worldPos.y - sp.y, 2));
+        const r = Math.sqrt(
+          Math.pow(worldPos.x - sp.x, 2) + Math.pow(worldPos.y - sp.y, 2),
+        );
         ctx.arc(sp.x, sp.y, r, 0, 2 * Math.PI);
         ctx.fill();
         ctx.stroke();
@@ -659,18 +740,23 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
         ctx.closePath();
         ctx.fill();
         ctx.stroke();
-      }else if(activeTool === "line"){
+      } else if (activeTool === "line") {
         ctx.moveTo(sp.x, sp.y);
         ctx.lineTo(worldPos.x, worldPos.y);
-        ctx.stroke()
-      }
-       else if (activeTool === "arrow") {
+        ctx.stroke();
+      } else if (activeTool === "arrow") {
         const angle = Math.atan2(worldPos.y - sp.y, worldPos.x - sp.x);
         ctx.moveTo(sp.x, sp.y);
         ctx.lineTo(worldPos.x, worldPos.y);
-        ctx.lineTo(worldPos.x - 15 * Math.cos(angle - Math.PI / 6), worldPos.y - 15 * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(
+          worldPos.x - 15 * Math.cos(angle - Math.PI / 6),
+          worldPos.y - 15 * Math.sin(angle - Math.PI / 6),
+        );
         ctx.moveTo(worldPos.x, worldPos.y);
-        ctx.lineTo(worldPos.x - 15 * Math.cos(angle + Math.PI / 6), worldPos.y - 15 * Math.sin(angle + Math.PI / 6));
+        ctx.lineTo(
+          worldPos.x - 15 * Math.cos(angle + Math.PI / 6),
+          worldPos.y - 15 * Math.sin(angle + Math.PI / 6),
+        );
         ctx.stroke();
       }
 
@@ -703,7 +789,10 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
     const worldPos = getEventWorldCoordinates(e);
     let newElement = null;
 
-    if ((activeTool === "pencil" || activeTool === "eraser") && currentLine.current.length > 1) {
+    if (
+      (activeTool === "pencil" || activeTool === "eraser") &&
+      currentLine.current.length > 1
+    ) {
       newElement = {
         id: `line-${Date.now()}`,
         type: activeTool,
@@ -711,7 +800,11 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
         color: activeTool === "eraser" ? "#FFFFFF" : strokeColor,
         strokeWidth: activeTool === "eraser" ? 20 : strokeWidth,
       };
-    } else if (activeTool !== "pencil" && activeTool !== "eraser" && activeTool !== "text") {
+    } else if (
+      activeTool !== "pencil" &&
+      activeTool !== "eraser" &&
+      activeTool !== "text"
+    ) {
       newElement = {
         id: `shape-${Date.now()}`,
         type: activeTool,
@@ -779,7 +872,9 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
     const selectedIds = selectedIdsRef.current;
     if (selectedIds.length === 0) return;
 
-    const nextElements = elementsRef.current.filter((el) => !selectedIds.includes(el.id));
+    const nextElements = elementsRef.current.filter(
+      (el) => !selectedIds.includes(el.id),
+    );
     setSelectedElementIds([]);
     setCanvasElements(nextElements);
     persistElements(nextElements);
@@ -850,7 +945,7 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
           setStrokeColor={setStrokeColor}
           strokeWidth={strokeWidth}
           setStrokeWidth={setStrokeWidth}
-          fillColor ={fillColor}
+          fillColor={fillColor}
           setFillColor={setFillColor}
         />
       </div>
@@ -859,7 +954,9 @@ export default function WhiteboardCanvas({ roomId = "room_brainstorm_2026" }) {
         <textarea
           autoFocus
           value={textInput.value}
-          onChange={(e) => setTextInput({ ...textInput, value: e.target.value })}
+          onChange={(e) =>
+            setTextInput({ ...textInput, value: e.target.value })
+          }
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();

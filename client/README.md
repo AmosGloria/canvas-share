@@ -1,16 +1,77 @@
-# React + Vite
+Canvas Share
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Canvas Share is a real-time collaborative whiteboard application that allows multiple users to draw, sketch, and annotate simultaneously. It features a rich set of drawing tools, customizable stroke and fill colors, and live updates across connected clients using Yjs and WebSockets.
 
-Currently, two official plugins are available:
+Future feature: Integration of video conferencing to allow live audio/video collaboration while drawing.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Features
+Real-time collaboration – Multiple users can draw simultaneously with updates synchronized instantly.
+Drawing tools:
+Pencil / Freehand sketch
+Eraser
+Text
+Shapes: Rectangle, Square, Circle, Diamond, Arrow, Line
+Customizable styles:
+Stroke color and thickness
+Fill color for shapes
+Selection and editing:
+Select, duplicate, delete objects
+Clear canvas – Only the creator of a shape can clear it globally, while others can clear their own local canvas.
+Infinite canvas – Expanding canvas size to accommodate ongoing drawing.
+Persistent storage – Yjs updates stored in MongoDB for real-time state persistence.
+Planned: Video conferencing to support live voice/video interaction.
+Tech Stack
+Frontend: React.js, Tailwind CSS, HTML5 Canvas
+Backend: Node.js, Express
+Real-time Collaboration: WebSockets via Yjs
+Database: MongoDB (local Docker or MongoDB Atlas free tier)
+Deployment-ready: Dockerized backend for scalable hosting
+Installation
+Prerequisites
+Node.js ≥ 18
+Docker (for local MongoDB)
+npm or yarn
+Steps
+Clone the repository:
+git clone https://github.com/AmosGloria/canvas-share.git
+cd canvas-share
+Start MongoDB (local Docker example):
+docker compose up -d
+Install server dependencies:
+cd server
+npm install
+Install client dependencies:
+cd ../client
+npm install
+Configure environment variables:
 
-## React Compiler
+Create a .env in the server folder:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+PORT=5000
+MONGODB_URI=mongodb://localhost:27017/canvas-share
+Run the backend server:
+cd server
+node server.cjs
+Run the frontend client:
+cd client
+pnpm dev
+Usage
+Open http://localhost:5173/ in multiple browsers.
+Select drawing tools from the toolbox at the top.
+Pick stroke color, fill color, and stroke width.
+Draw shapes, text, or freehand sketches.
+Real-time updates appear on all connected clients.
+Only creators can clear their shapes globally; other users can clear locally.
+Future updates will include live video/audio collaboration.
+Deployment Recommendations
+Frontend: Cloudflare Pages (free, scalable)
+Backend + DB: Fly.io (Dockerized, persistent volumes) or Railway (free tier for development)
+MongoDB: Atlas free tier (512 MB storage) for portfolio/demo purposes
+Use Docker for replicable deployments and future scaling.
+License
 
-## Expanding the ESLint configuration
+MIT License – feel free to fork and modify for learning or portfolio use.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Contact
+GitHub: AmosGloria
+Email: amoskesegloria@gmail.com

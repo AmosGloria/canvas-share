@@ -1,13 +1,15 @@
 import React from "react";
 import {
-  LuPencil, 
-  LuCircle, 
-  LuSquare, 
-  LuRectangleHorizontal, 
-  LuEraser, 
-  LuDiamond, 
-  LuArrowRight, 
-  LuTrash2, LuCopy} from "react-icons/lu";
+  LuPencil,
+  LuCircle,
+  LuSquare,
+  LuRectangleHorizontal,
+  LuEraser,
+  LuDiamond,
+  LuArrowRight,
+  LuTrash2,
+  LuCopy,
+} from "react-icons/lu";
 import { MdTextFields, MdDeleteSweep, MdHorizontalRule } from "react-icons/md";
 
 interface ToolBoxProps {
@@ -43,15 +45,15 @@ export default function ToolBox({
 }: ToolBoxProps) {
   const tools = [
     { id: "select", icon: "🖱️", label: "Select" },
-    { id: "pencil", icon: <LuPencil/>, label: "Sketch" },
-    { id: "eraser", icon: <LuEraser/>, label: "Eraser" },
-    { id: "text", icon: <MdTextFields/>, label: "Text" },
-    { id: "rectangle", icon:<LuRectangleHorizontal/>, label: "Rectangle" },
-    { id: "square", icon: <LuSquare/>, label: "Square" },
-    { id: "circle", icon: <LuCircle/>, label: "Circle" },
-    { id: "diamond", icon: <LuDiamond/>, label: "Diamond" },
-    { id: "arrow", icon: <LuArrowRight/>, label: "Arrow" },
-    { id: "line", icon: <MdHorizontalRule/>, label: "Line"},
+    { id: "pencil", icon: <LuPencil />, label: "Sketch" },
+    { id: "eraser", icon: <LuEraser />, label: "Eraser" },
+    { id: "text", icon: <MdTextFields />, label: "Text" },
+    { id: "rectangle", icon: <LuRectangleHorizontal />, label: "Rectangle" },
+    { id: "square", icon: <LuSquare />, label: "Square" },
+    { id: "circle", icon: <LuCircle />, label: "Circle" },
+    { id: "diamond", icon: <LuDiamond />, label: "Diamond" },
+    { id: "arrow", icon: <LuArrowRight />, label: "Arrow" },
+    { id: "line", icon: <MdHorizontalRule />, label: "Line" },
   ];
 
   const selectedLabel =
@@ -74,7 +76,6 @@ export default function ToolBox({
         >
           <span aria-hidden="true">{tool.icon}</span>
         </button>
-        
       ))}
 
       {hasSelectedElement && (
@@ -99,7 +100,7 @@ export default function ToolBox({
             : "text-slate-600 border-transparent cursor-not-allowed"
         }`}
       >
-        <LuCopy/>
+        <LuCopy />
       </button>
 
       <button
@@ -114,7 +115,7 @@ export default function ToolBox({
             : "text-slate-600 border-transparent cursor-not-allowed"
         }`}
       >
-        <LuTrash2/>
+        <LuTrash2 />
       </button>
 
       <button
@@ -124,35 +125,33 @@ export default function ToolBox({
         aria-label="Clear all objects"
         className="w-9 h-9 flex shrink-0 items-center justify-center rounded-xl text-sm font-bold text-rose-400 border border-transparent hover:border-rose-500/30 hover:bg-rose-500/10 transition-all duration-200"
       >
-        <MdDeleteSweep/>
+        <MdDeleteSweep />
       </button>
       <div className="flex items-center space-x-2 ml-2">
-  {/* Stroke color picker */}
-  <input
-    type="color"
-    value={strokeColor}
-    onChange={(e) => setStrokeColor(e.target.value)}
-    className="w-8 h-8 border rounded"
-    title="stroke color"
-  />
-  <input
-    type="range"
-    min="1"
-    max="20"
-    value={strokeWidth}
-    onChange={(e) => setStrokeWidth(parseInt(e.target.value))}
-    className="w-20"
-    title="stroke width"
-  />
-    <input
-    type="color"
-    value={fillColor}
-    onChange={(e) => setFillColor(e.target.value)}
-    className="w-8 h-8 border rounded"
-    title="Fill Color"
-  />
-  
-</div>
+        <input
+          type="color"
+          value={strokeColor}
+          onChange={(e) => setStrokeColor(e.target.value)}
+          className="w-8 h-8 border rounded"
+          title="stroke color"
+        />
+        <input
+          type="range"
+          min="1"
+          max="20"
+          value={strokeWidth}
+          onChange={(e) => setStrokeWidth(parseInt(e.target.value))}
+          className="w-20"
+          title="stroke width"
+        />
+        <input
+          type="color"
+          value={fillColor}
+          onChange={(e) => setFillColor(e.target.value)}
+          className="w-8 h-8 border rounded"
+          title="Fill Color"
+        />
+      </div>
     </main>
   );
 }
