@@ -7,6 +7,8 @@ import {
   LuEraser,
   LuDiamond,
   LuArrowRight,
+  LuHand,
+  LuMousePointer2,
   LuTrash2,
   LuCopy,
 } from "react-icons/lu";
@@ -44,7 +46,8 @@ export default function ToolBox({
   setFillColor,
 }: ToolBoxProps) {
   const tools = [
-    { id: "select", icon: "🖱️", label: "Select" },
+    { id: "select", icon: <LuMousePointer2 />, label: "Select" },
+    { id: "pan", icon: <LuHand />, label: "Pan" },
     { id: "pencil", icon: <LuPencil />, label: "Sketch" },
     { id: "eraser", icon: <LuEraser />, label: "Eraser" },
     { id: "text", icon: <MdTextFields />, label: "Text" },
