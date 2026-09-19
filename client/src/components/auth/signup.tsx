@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { useAuth } from "../../hook/authContext";
+import { useAuth } from "../../hooks/authContext";
 
 export default function Signup() {
   const { login } = useAuth();
